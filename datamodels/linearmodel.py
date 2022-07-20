@@ -25,7 +25,7 @@ class LinearModel(Model):
         x = self.reshape(x)
         y = self.reshape(y)
 
-        self.model.fit(x, y)
+        self.model.fit(x, y, **kwargs)
 
     def predict_model(self, x):
         x = self.reshape(x)
