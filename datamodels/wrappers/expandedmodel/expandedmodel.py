@@ -125,7 +125,7 @@ class ExpandedModel(PickleInterface):
         @return: pipeline
         """
         transformers = self.transformers.get_list_transfomers()
-        estimator = self.model.get_estimator()
+        estimator = self.model.model if hasattr(self.model, "model") else None
         return make_pipeline(*transformers, estimator)
 
 
