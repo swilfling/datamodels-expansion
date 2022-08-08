@@ -106,7 +106,7 @@ class ExpandedModel(PickleInterface):
         self.model.set_feature_names(self.get_transformed_feature_names())
 
     def get_estimator(self):
-        return self.model.get_estimator()
+        return self.model.model if hasattr(self.model, "model") else None
 
     def get_num_predictors(self):
         return self.num_predictors
