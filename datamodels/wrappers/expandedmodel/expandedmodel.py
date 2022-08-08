@@ -1,6 +1,7 @@
 from . import TransformerSet
 from .storage import PickleInterface
 from sklearn.pipeline import make_pipeline
+import numpy as np
 
 
 class ExpandedModel(PickleInterface):
@@ -25,27 +26,26 @@ class ExpandedModel(PickleInterface):
         """
         self.model.input_shape = X.shape[1:]
         self.num_predictors = X.shape[-1]
-        X, y = self.preprocess(X, y)
+        X, y = self.scale(X, y)
         X = self.transformers.fit_transform(X, y)
+        X = self.reshape_for_training(X)
+        y = self.reshape_for_training(y)
         self.model.train_model(X, y)
 
-    def reshape_data(self, X):
-        return self.model.reshape_data(X)
+    def reshape_for_training(self, X):
+        if X.ndim == 2:
+            return np.expand_dims(X, axis=1)
+        if X.ndim == 1:
+            return np.reshape(X, (X.shape[0], 1, 1))
+        return X
 
     def scale(self, X, y):
-        return self.model.scale(X, y)
-
-    def preprocess(self, X, y=None):
-        """
-        Call preprocessing functions - used for training
-        @param X: tensor of shape (n_samples, lookback_horizon + 1, input_features)
-        @param y: tensor of shape (n_samples, input_features)
-        """
-        #if not X.ndim == 3:
-        #    raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
-        #                       f'but is {X.shape}')
-        X = self.model.reshape_data(X)
-        return self.model.scale(X, y)
+        if not X.ndim == 3:
+            raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
+                               f'but is {X.shape}')
+        X = self.model.x_scaler.transform(X)
+        y = self.model.y_scaler.transform(y)
+        return X, y
 
     def fit(self, X, y, **fit_params):
         """
@@ -61,20 +61,18 @@ class ExpandedModel(PickleInterface):
         @param X: np.array of shape (n_samples, lookback_horizon + 1, input_features)
         @return: np.array of shape (n_samples, input_features)
         """
-        #if not X.ndim == 3:
-        #    raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
-        #                       f'but is {X.shape}')
-        X = self.model.reshape_data(X)
+        if not X.ndim == 3:
+            raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
+                               f'but is {X.shape}')
         X = self.model.x_scaler.transform(X)
         X = self.transformers.transform(X)
+        X = self.reshape_for_training(X)
         y = self.model.predict_model(X)
         if not y.shape[0] == X.shape[0]:
             raise AssertionError(f'samples in prediction do not match samples in input\n'
                                  f'expected: {X.shape[0]}, but is {y.shape[0]}.')
-
-        if not y.ndim == 2:
-            raise AssertionError(f'predictions must be two dimensional (samples, target_features)\n'
-                                 f'but are {y.shape}.')
+        if y.ndim == 1:
+            y = np.expand_dims(y, axis=-1)
         return self.model.y_scaler.inverse_transform(y)
 
     def fit_transformers(self, X, y, **fit_params):
@@ -83,7 +81,7 @@ class ExpandedModel(PickleInterface):
         @param X: tensor of shape (n_samples, lookback_horizon + 1, input_features)
         @param y: tensor of shape (n_samples, input_features)
         """
-        X, y = self.preprocess(X, y)
+        X, y = self.scale(X, y)
         self.transformers.fit(X, y)
 
     def transform_features(self, X):
