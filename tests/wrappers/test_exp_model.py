@@ -12,7 +12,7 @@ def test_instantiate_expandedmodel():
     expanded_model = ExpandedModel(transformers=TransformerSet(transformers=[transformer]), model=model, feature_names=[])
     estimator = expanded_model.model
 
-    transformer_from_model = expanded_model.transformers.get_transformer_by_name('polynomialexpansion')
+    transformer_from_model = expanded_model.transformers.get_transformer_by_name('functiontransformer')
     assert(isinstance(estimator, RandomForestRegression))
     assert(isinstance(transformer_from_model,FunctionTransformer))
     assert(transformer_from_model == transformer)
