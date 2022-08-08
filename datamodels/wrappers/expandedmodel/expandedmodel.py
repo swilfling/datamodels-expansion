@@ -40,9 +40,6 @@ class ExpandedModel(PickleInterface):
         return X
 
     def scale(self, X, y):
-        if not X.ndim == 3:
-            raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
-                               f'but is {X.shape}')
         X = self.model.x_scaler.transform(X)
         y = self.model.y_scaler.transform(y)
         return X, y
@@ -61,9 +58,6 @@ class ExpandedModel(PickleInterface):
         @param X: np.array of shape (n_samples, lookback_horizon + 1, input_features)
         @return: np.array of shape (n_samples, input_features)
         """
-        if not X.ndim == 3:
-            raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
-                               f'but is {X.shape}')
         X = self.model.x_scaler.transform(X)
         X = self.transformers.transform(X)
         X = self.reshape_for_training(X)
