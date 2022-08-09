@@ -40,9 +40,6 @@ class ExpandedModel(PickleInterface):
         return X
 
     def scale(self, X, y):
-        if not X.ndim == 3:
-            raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
-                               f'but is {X.shape}')
         X = self.model.x_scaler.transform(X)
         y = self.model.y_scaler.transform(y)
         return X, y
@@ -61,9 +58,6 @@ class ExpandedModel(PickleInterface):
         @param X: np.array of shape (n_samples, lookback_horizon + 1, input_features)
         @return: np.array of shape (n_samples, input_features)
         """
-        if not X.ndim == 3:
-            raise RuntimeError(f'x must be an array of shape (samples, lookback_horizon + 1, input_features)\n'
-                               f'but is {X.shape}')
         X = self.model.x_scaler.transform(X)
         X = self.transformers.transform(X)
         X = self.reshape_for_training(X)
@@ -106,7 +100,7 @@ class ExpandedModel(PickleInterface):
         self.model.set_feature_names(self.get_transformed_feature_names())
 
     def get_estimator(self):
-        return self.model.get_estimator()
+        return self.model.model if hasattr(self.model, "model") else None
 
     def get_num_predictors(self):
         return self.num_predictors
@@ -125,7 +119,7 @@ class ExpandedModel(PickleInterface):
         @return: pipeline
         """
         transformers = self.transformers.get_list_transfomers()
-        estimator = self.model.get_estimator()
+        estimator = self.model.model if hasattr(self.model, "model") else None
         return make_pipeline(*transformers, estimator)
 
 
