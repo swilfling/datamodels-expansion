@@ -22,3 +22,6 @@ class TransformerParams(JSONInterface):
             sim_param_list = [cls.from_json(dict) for dict in list_dicts]
             return sim_param_list
 
+    @staticmethod
+    def get_params_of_type(list_params, type: str):
+        return [params for params in list_params if params.type == type]
