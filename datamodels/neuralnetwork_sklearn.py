@@ -22,7 +22,7 @@ class NeuralNetwork_sklearn(Model):
 
     def reshape(self, X):
         if X.ndim == 3:
-            return X.reshape(X.shape[0],X.shape[2])
+            return X.reshape(X.shape[0],X.shape[1] * X.shape[2])
         return X
 
     def train_model(self, x, y, **kwargs):
