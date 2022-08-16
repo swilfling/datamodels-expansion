@@ -25,7 +25,7 @@ from . encoderdecoder import EncoderDecoderLSTM
 from . cnnlstm import ConvolutionLSTM
 from . gru import GRU
 from . rnn import RecurrentNetwork
-
+from . neuralnetwork_sklearn import NeuralNetwork_sklearn
 
 # wrappers
 from . import wrappers

@@ -20,7 +20,8 @@ from datamodels import (
     ConvolutionLSTM,
     EncoderDecoderLSTM,
     GRU,
-    RecurrentNetwork
+    RecurrentNetwork,
+    NeuralNetwork_sklearn
 )
 
 
@@ -35,7 +36,8 @@ from datamodels import (
     ConvolutionNetwork,
     ConvolutionLSTM,
     GRU,
-    RecurrentNetwork
+    RecurrentNetwork,
+    NeuralNetwork_sklearn
 ])
 def test_predict_sequence_save_and_load(model_class, tmpdir):
     test_model_path = tmpdir.join('testModel')
@@ -87,7 +89,8 @@ def test_predict_sequence_save_and_load(model_class, tmpdir):
     ConvolutionLSTM,
     EncoderDecoderLSTM,
     GRU,
-    RecurrentNetwork
+    RecurrentNetwork,
+    NeuralNetwork_sklearn
 ])
 def test_predict_single_value_save_and_load(model_class, tmpdir):
     test_model_path = tmpdir.join('testModel')
