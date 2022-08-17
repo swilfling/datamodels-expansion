@@ -122,4 +122,9 @@ class ExpandedModel(PickleInterface):
         estimator = self.model.model if hasattr(self.model, "model") else None
         return make_pipeline(*transformers, estimator)
 
-
+    def save(self, path):
+        """
+        Save model
+        :param path: save model to directory
+        """
+        self.save_pkl(path, "expanded_model.pkl")
