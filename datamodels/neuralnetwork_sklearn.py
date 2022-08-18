@@ -22,7 +22,7 @@ class NeuralNetwork_sklearn(Model):
 
     def reshape(self, X):
         if X.ndim == 3:
-            return X.reshape(X.shape[0],X.shape[1] * X.shape[2])
+            return X.reshape(X.shape[0], X.shape[1] * X.shape[2])
         return X
 
     def train_model(self, x, y, **kwargs):
@@ -36,6 +36,10 @@ class NeuralNetwork_sklearn(Model):
 
     def save(self, path="data/models/NeuralNetwork_sklearn"):
         super().save(path)
+        with open(f"{path}/model.pickle", "wb") as f:
+            pickle.dump(self.model, f)
 
     def load_model(self, path="data/models/NeuralNetwork_sklearn"):
-        super().save(path)
+        super().load(path)
+        with open(f"{path}/model.pickle", "rb") as f:
+            self.model = pickle.load(f)
