@@ -18,7 +18,7 @@ class TransformerSet(TransformerMixin, PickleInterface):
 
     @classmethod
     def from_list_params(cls, list_params: List[TransformerParams] = [], feature_names: List[str] = []):
-        return cls([BasicInterface.from_name(params.type, **params.params) for params in list_params], feature_names)
+        return cls([BasicInterface.from_name(params.type, issubcl=False, **params.params) for params in list_params], feature_names)
 
     #################################### Getters and Setters ###########################################################
 
